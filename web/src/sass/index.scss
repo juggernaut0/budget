@@ -1,0 +1,79 @@
+@use "modal";
+@use "variables" as *;
+
+body {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 960px;
+}
+
+span {
+    min-width: 0;
+}
+
+label {
+    display: flex;
+    gap: 0.5rem;
+    min-width: 0;
+}
+
+input {
+    min-width: 20px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 0.25rem;
+    align-items: center;
+
+    &.odd {
+        background-color: #eee;
+    }
+
+    &.header {
+        background-color: #333;
+        color: #fff;
+    }
+
+    &.clickable:hover {
+        background-color: #ddd;
+    }
+}
+
+.col {
+    flex: 1;
+
+    &.align-right {
+        text-align: right;
+    }
+
+    &.buttons {
+        flex-grow: 0;
+        flex-basis: 20px;
+        align-self: flex-start;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-evenly;
+    }
+}
+
+.buttons button {
+    border: 0;
+    background-color: transparent;
+    color: #666;
+    height: 20px;
+
+    &.button-delete{
+        color: $btnDangerColor;
+        &:hover {
+            color: $btnDangerHoverColor;
+        }
+    }
+}
+
+.negative {
+    color: #f00;
+}

@@ -1,0 +1,5 @@
+* When adding a month, make sure it doesn't already exist
+    * Validate no duplicates on backend
+* When displaying months, make sure they are in order
+    * Maybe sort them on load?
+* Move UI calculations to BudgetService

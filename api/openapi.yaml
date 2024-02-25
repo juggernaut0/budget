@@ -1,0 +1,85 @@
+openapi: 3.0.3
+info:
+  title: Budget
+  version: '1'
+paths:
+  /budget/api/{name}:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      operationId: getBudget
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Budget'
+    post:
+      operationId: updateBudget
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Budget'
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    Budget:
+      type: object
+      properties:
+        months:
+          type: array
+          items:
+            $ref: '#/components/schemas/Month'
+        subscriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Expense'
+        settings:
+          $ref: '#/components/schemas/Settings'
+    Month:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        income:
+          type: integer
+          format: int32
+        expenses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Expense'
+        savedPct:
+          type: integer
+          format: int32
+        savedFlat:
+          type: integer
+          format: int32
+    Expense:
+      type: object
+      properties:
+        name:
+          type: string
+        amount:
+          type: integer
+          format: int32
+    Settings:
+      type: object
+      properties:
+        savingsPctDefault:
+          type: integer
+          format: int32
+        savingsFlatDefault:
+          type: integer
+          format: int32
+        debtMultiplier:
+          type: number
