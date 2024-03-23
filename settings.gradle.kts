@@ -7,7 +7,7 @@ pluginManagement {
 }
 
 plugins {
-    id("dev.twarner.settings") version "1.0.0"
+    id("dev.twarner.settings") version "1.0.4"
 }
 
 include("api", "dbmigrate", "service", "web")
