@@ -1,10 +1,19 @@
 package budget
 
+import kotlinx.browser.document
 import kotlinx.datetime.*
 import kui.Component
 import kui.Props
 import kui.classes
 import kui.componentOf
+import multiplatform.api.safeJson
+import org.w3c.dom.HTMLAnchorElement
+import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.url.URL
+import org.w3c.files.Blob
+import org.w3c.files.BlobPropertyBag
+import org.w3c.files.FileReader
+import org.w3c.files.get
 import kotlinx.datetime.Month as KtMonth
 
 class OverviewScreen(private val service: BudgetService) : Component() {
@@ -64,9 +73,41 @@ class OverviewScreen(private val service: BudgetService) : Component() {
                 if (confirmed) {
                     model.months.removeAt(index)
                     service.save()
+                    render()
                 }
             }
         )
+    }
+
+    private fun exportData() {
+        val json = safeJson.encodeToString(budget.api.Budget.serializer(), model.toApiModel())
+        val blob = Blob(arrayOf(json), BlobPropertyBag(type = "application/json"))
+        val url = URL.createObjectURL(blob)
+        val a = document.createElement("a") as HTMLAnchorElement
+        a.href = url
+        a.download = "budget.json"
+        a.click()
+    }
+
+    private fun importData() {
+        val input = document.createElement("input") as HTMLInputElement
+        input.type = "file"
+        input.accept = "application/json"
+        input.onchange = {
+            val file = input.files?.get(0)
+            if (file != null) {
+                val reader = FileReader()
+                reader.onload = {
+                    val json = reader.result as String
+                    val newModel = safeJson.decodeFromString(budget.api.Budget.serializer(), json)
+                    model.updateFromApiModel(newModel)
+                    service.save()
+                    render()
+                }
+                reader.readAsText(file)
+            }
+        }
+        input.click()
     }
 
     private class OverviewRow(
@@ -110,6 +151,8 @@ class OverviewScreen(private val service: BudgetService) : Component() {
             button(Props(click = { addMonth() })) { +"Add month" }
             button(Props(click = { BudgetApp.pushSubscriptions() })) { +"Subscriptions" }
             button(Props(click = { BudgetApp.pushSettings() })) { +"Settings" }
+            button(Props(click = { exportData() })) { +"Export data" }
+            button(Props(click = { importData() })) { +"Import data" }
             div(classes("row", "header")) {
                 div(classes("col")) {
                     +"Month"
