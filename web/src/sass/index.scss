@@ -41,6 +41,11 @@ input {
     &.clickable:hover {
         background-color: #ddd;
     }
+
+    &.year {
+        background-color: #eee;
+        font-weight: bold;
+    }
 }
 
 .col {
