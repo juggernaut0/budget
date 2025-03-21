@@ -48,7 +48,7 @@ private fun ApiExpense.toMutableModel(): Expense {
     )
 }
 
-data class Money(val cents: Int) {
+value class Money(val cents: Int) {
     constructor(dollars: Double) : this((dollars * 100).toInt())
 
     override fun toString(): String {
