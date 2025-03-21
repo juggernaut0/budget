@@ -22,6 +22,7 @@ data class Budget(
     fun updateFromApiModel(model: ApiBudget) {
         months.clear()
         months.addAll(model.months.map { it.toMutableModel() })
+        months.sortBy { it.date }
         subscriptions.clear()
         subscriptions.addAll(model.subscriptions.map { it.toMutableModel() })
         settings.savingsPctDefault = model.settings.savingsPctDefault

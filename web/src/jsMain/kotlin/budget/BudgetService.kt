@@ -8,6 +8,7 @@ import budget.api.GetBudgetParams
 import budget.api.UpdateBudgetParams
 import budget.api.getBudget
 import budget.api.updateBudget
+import kotlinx.datetime.LocalDate
 import multiplatform.api.FetchClient
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KMutableProperty0
@@ -61,5 +62,23 @@ class BudgetService {
                 save()
             }
         }
+    }
+
+    fun addNewMonth(date: LocalDate): Month {
+        val newMonth = Month(
+            date = date,
+            income = Money(0),
+            expenses = model.subscriptions.toMutableList(),
+            savedPct = model.settings.savingsPctDefault,
+            savedFlat = model.settings.savingsFlatDefault,
+        )
+        val addPos = model.months.indexOfFirst { it.date > date }
+        if (addPos == -1) {
+            model.months.add(newMonth)
+        } else {
+            model.months.add(addPos, newMonth)
+        }
+        save()
+        return newMonth
     }
 }
