@@ -132,6 +132,7 @@ class OverviewScreen(private val service: BudgetService) : Component() {
         val incomeMoM: Money,
         val expenses: Money,
         val saved: Money,
+        val savingsToDate: Money,
         val remaining: Money,
     )
 
@@ -145,6 +146,7 @@ class OverviewScreen(private val service: BudgetService) : Component() {
         val res = mutableListOf<OverviewYear>()
         var lastMonthRemaining = 0
         var lastMonthIncome = Money(0)
+        var totalSavings = Money(0)
 
         for ((year, months) in byYear) {
             val rows = mutableListOf<OverviewRow>()
@@ -156,9 +158,10 @@ class OverviewScreen(private val service: BudgetService) : Component() {
                 val incomeMoM = income - lastMonthIncome
                 val expenses = month.expenses.sumOf { it.amount.cents }.let { Money(it) }
                 val saved = month.savedFlat + Money(month.savedPct * income.cents / 100)
+                totalSavings += saved
                 val remaining = income - expenses - saved + Money((lastMonthRemaining * model.settings.debtMultiplier).toInt())
 
-                rows.add(OverviewRow(month, monthName, income, incomeMoM, expenses, saved, remaining))
+                rows.add(OverviewRow(month, monthName, income, incomeMoM, expenses, saved, totalSavings, remaining))
 
                 lastMonthRemaining = remaining.cents.coerceAtMost(0)
                 lastMonthIncome = income
@@ -187,7 +190,7 @@ class OverviewScreen(private val service: BudgetService) : Component() {
                     +"Expenses"
                 }
                 div(classes("col", "align-right")) {
-                    +"Saved"
+                    +"Saved (to date)"
                 }
                 div(classes("col", "align-right")) {
                     +"Remaining"
@@ -216,7 +219,14 @@ class OverviewScreen(private val service: BudgetService) : Component() {
                             +month.expenses.toString()
                         }
                         div(classes("col", "align-right")) {
-                            +month.saved.toString()
+                            val savingsClasses = if (month.savingsToDate.cents < 0) {
+                                classes("negative")
+                            } else {
+                                Props.empty
+                            }
+                            +"${month.saved} ("
+                            span(savingsClasses) { +month.savingsToDate.toString() }
+                            +")"
                         }
                         val remainingClasses = if (month.remaining.cents < 0) {
                             classes("col", "align-right", "negative")
