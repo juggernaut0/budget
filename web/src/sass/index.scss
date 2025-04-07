@@ -46,6 +46,10 @@ input {
         background-color: #eee;
         font-weight: bold;
     }
+
+    &.margin-bottom {
+        margin-bottom: 1rem;
+    }
 }
 
 .col {

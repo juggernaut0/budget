@@ -67,7 +67,7 @@ class BudgetService {
     fun addNewMonth(date: LocalDate): Month {
         val newMonth = Month(
             date = date,
-            income = Money(0),
+            incomes = mutableListOf(),
             expenses = model.subscriptions.toMutableList(),
             savedPct = model.settings.savingsPctDefault,
             savedFlat = model.settings.savingsFlatDefault,

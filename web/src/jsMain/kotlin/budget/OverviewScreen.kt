@@ -154,10 +154,10 @@ class OverviewScreen(private val service: BudgetService) : Component() {
             for (month in months) {
                 val monthAbbr = month.date.month.name.substring(0, 3).lowercase().replaceFirstChar { it.uppercaseChar() }
                 val monthName = "$monthAbbr ${month.date.year}"
-                val income = month.income
+                val income = month.totalIncome
                 val incomeMoM = income - lastMonthIncome
-                val expenses = month.expenses.sumOf { it.amount.cents }.let { Money(it) }
-                val saved = month.savedFlat + Money(month.savedPct * income.cents / 100)
+                val expenses = month.totalExpenses
+                val saved = month.totalSaved
                 totalSavings += saved
                 val remaining = income - expenses - saved + Money((lastMonthRemaining * model.settings.debtMultiplier).toInt())
 

@@ -54,6 +54,10 @@ components:
         income:
           type: integer
           format: int32
+        incomes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Income'
         expenses:
           type: array
           items:
@@ -62,6 +66,14 @@ components:
           type: integer
           format: int32
         savedFlat:
+          type: integer
+          format: int32
+    Income:
+      type: object
+      properties:
+        description:
+          type: string
+        amount:
           type: integer
           format: int32
     Expense:

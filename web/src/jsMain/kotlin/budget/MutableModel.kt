@@ -4,6 +4,7 @@ import kotlinx.datetime.LocalDate
 import kotlin.math.absoluteValue
 import budget.api.Budget as ApiBudget
 import budget.api.Expense as ApiExpense
+import budget.api.Income as ApiIncome
 import budget.api.Month as ApiMonth
 
 data class Budget(
@@ -31,10 +32,22 @@ data class Budget(
     }
 }
 
+private fun ApiIncome.toMutableModel(): Income {
+    return Income(
+        description = description,
+        amount = Money(amount),
+    )
+}
+
 private fun ApiMonth.toMutableModel(): Month {
+    val incomes = if (incomes.isEmpty() && income != 0) {
+        mutableListOf(Income("Income", Money(income)))
+    } else {
+        incomes.mapTo(mutableListOf()) { it.toMutableModel() }
+    }
     return Month(
         date = date,
-        income = Money(income),
+        incomes = incomes,
         expenses = expenses.mapTo(mutableListOf()) { it.toMutableModel() },
         savedPct = savedPct,
         savedFlat = Money(savedFlat),
@@ -67,18 +80,40 @@ value class Money(val cents: Int) {
 
 data class Month(
     var date: LocalDate,
-    var income: Money,
+    var incomes: MutableList<Income>,
     val expenses: MutableList<Expense>,
     var savedPct: Int,
     var savedFlat: Money,
 ) {
+    val totalIncome: Money
+        get() = incomes.sumOf { it.amount.cents }.let { Money(it) }
+
+    val totalExpenses: Money
+        get() = expenses.sumOf { it.amount.cents }.let { Money(it) }
+
+    val totalSaved: Money
+        get() = savedFlat + Money(savedPct * totalIncome.cents / 100)
+
     fun toApiModel(): ApiMonth {
         return ApiMonth(
             date = date,
-            income = income.cents,
+            income = totalIncome.cents,
+            incomes = incomes.map { it.toApiModel() },
             expenses = expenses.map { it.toApiModel() },
             savedPct = savedPct,
             savedFlat = savedFlat.cents,
+        )
+    }
+}
+
+data class Income(
+    var description: String,
+    var amount: Money,
+) {
+    fun toApiModel(): budget.api.Income {
+        return budget.api.Income(
+            description = description,
+            amount = amount.cents,
         )
     }
 }

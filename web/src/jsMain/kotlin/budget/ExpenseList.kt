@@ -71,6 +71,15 @@ class ExpenseList(private val service: BudgetService, private val model: Mutable
                     }
                 }
             }
+            div(classes("row", "header")) {
+                div(classes("col")) {
+                    +"Total Expenses"
+                }
+                div(classes("col", "align-right")) {
+                    +model.sumOf { it.amount.cents }.let { Money(it) }.toString()
+                }
+                div(classes("col", "buttons")) { }
+            }
         }
     }
 }

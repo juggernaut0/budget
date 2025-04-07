@@ -1,3 +1,2 @@
 * When adding a month, make sure it doesn't already exist
     * Validate no duplicates on backend
-* Move UI calculations to BudgetService
