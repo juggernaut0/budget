@@ -51,19 +51,6 @@ class BudgetService {
         saveFn()
     }
 
-    fun <T> saving(backing: KMutableProperty0<T>): ReadWriteProperty<Any?, T> {
-        return object : ReadWriteProperty<Any?, T> {
-            override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-                return backing.get()
-            }
-
-            override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-                backing.set(value)
-                save()
-            }
-        }
-    }
-
     fun addNewMonth(date: LocalDate): Month {
         val newMonth = Month(
             date = date,

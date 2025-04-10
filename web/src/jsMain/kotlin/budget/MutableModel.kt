@@ -34,21 +34,22 @@ data class Budget(
 
 private fun ApiIncome.toMutableModel(): Income {
     return Income(
-        description = description,
+        description = description.orEmpty(),
         amount = Money(amount),
     )
 }
 
 private fun ApiMonth.toMutableModel(): Month {
-    val incomes = if (incomes.isEmpty() && income != 0) {
+    val income = income
+    val incomes = if (incomes.orEmpty().isEmpty() && income != 0 && income != null) {
         mutableListOf(Income("Income", Money(income)))
     } else {
-        incomes.mapTo(mutableListOf()) { it.toMutableModel() }
+        incomes.orEmpty().mapTo(mutableListOf()) { it.toMutableModel() }
     }
     return Month(
         date = date,
         incomes = incomes,
-        expenses = expenses.mapTo(mutableListOf()) { it.toMutableModel() },
+        expenses = expenses.orEmpty().mapTo(mutableListOf()) { it.toMutableModel() },
         savedPct = savedPct,
         savedFlat = Money(savedFlat),
     )
@@ -56,7 +57,7 @@ private fun ApiMonth.toMutableModel(): Month {
 
 private fun ApiExpense.toMutableModel(): Expense {
     return Expense(
-        name = name,
+        name = name.orEmpty(),
         amount = Money(amount),
     )
 }
@@ -110,9 +111,9 @@ data class Income(
     var description: String,
     var amount: Money,
 ) {
-    fun toApiModel(): budget.api.Income {
-        return budget.api.Income(
-            description = description,
+    fun toApiModel(): ApiIncome {
+        return ApiIncome(
+            description = description.takeUnless { it.isEmpty() },
             amount = amount.cents,
         )
     }

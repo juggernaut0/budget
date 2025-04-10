@@ -49,23 +49,6 @@ class IncomeSavingsEditor(private val service: BudgetService, private val month:
         )
     }
 
-    private fun createIncomeModel(income: Income) = object {
-        var description: String
-            get() = income.description
-            set(value) {
-                income.description = value
-                service.save()
-                render()
-            }
-        var amount: Money
-            get() = income.amount
-            set(value) {
-                income.amount = value
-                service.save()
-                render()
-            }
-    }
-
     override fun render() {
         markup().div {
             div(classes("row")) {
@@ -82,7 +65,10 @@ class IncomeSavingsEditor(private val service: BudgetService, private val month:
                     div(classes("col", "buttons")) { }
                 }
                 for ((i, income) in month.incomes.withIndex()) {
-                    val model = createIncomeModel(income)
+                    val model = object {
+                        var description: String by rendering(service.saving(income::description))
+                        var amount: Money by rendering(service.saving(income::amount))
+                    }
                     val rowClasses = if (i % 2 == 0) classes("row") else classes("row", "odd")
                     div(rowClasses) {
                         inputText(classes("col"), model = model::description)

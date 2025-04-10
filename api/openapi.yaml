@@ -45,6 +45,10 @@ components:
             $ref: '#/components/schemas/Expense'
         settings:
           $ref: '#/components/schemas/Settings'
+      required:
+        - months
+        - subscriptions
+        - settings
     Month:
       type: object
       properties:
@@ -68,6 +72,10 @@ components:
         savedFlat:
           type: integer
           format: int32
+      required:
+        - date
+        - savedPct
+        - savedFlat
     Income:
       type: object
       properties:
@@ -76,6 +84,8 @@ components:
         amount:
           type: integer
           format: int32
+      required:
+        - amount
     Expense:
       type: object
       properties:
@@ -84,6 +94,8 @@ components:
         amount:
           type: integer
           format: int32
+      required:
+        - amount
     Settings:
       type: object
       properties:
@@ -95,3 +107,7 @@ components:
           format: int32
         debtMultiplier:
           type: number
+      required:
+        - savingsPctDefault
+        - savingsFlatDefault
+        - debtMultiplier
